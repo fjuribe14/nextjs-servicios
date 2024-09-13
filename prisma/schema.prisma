@@ -13,27 +13,104 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Post {
-  id        Int      @id @default(autoincrement())
-  title     String   @db.VarChar(255)
-  createdAt DateTime @default(now()) @db.Timestamp(6)
-  content   String?
-  published Boolean  @default(false)
-  authorId  Int
-  User      User     @relation(fields: [authorId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-}
-
 model Profile {
-  id     Int     @id @default(autoincrement())
+  id     String  @id @default(cuid())
   bio    String?
-  userId Int     @unique
+  userId String  @unique
   User   User    @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model User {
-  id      Int      @id @default(autoincrement())
+  id      String   @id @default(cuid())
   name    String?  @db.VarChar(255)
   email   String   @unique @db.VarChar(255)
-  Post    Post[]
   Profile Profile?
+}
+
+// models/Client.prisma
+model Client {
+  id            String          @id @default(cuid())
+  name          String
+  email         String          @unique
+  phone         String
+  address       String
+  orders        Order[]
+  Product       Product[]
+  PaymentMethod PaymentMethod[]
+}
+
+// models/Product.prisma
+model Product {
+  id          String  @id @default(cuid())
+  name        String
+  description String
+  price       Decimal
+  stock       Int
+  images      Image[]
+  client      Client  @relation(fields: [clientId], references: [id])
+  clientId    String
+
+  OrderProduct OrderProduct[]
+}
+
+// models/Image.prisma
+model Image {
+  id        String  @id @default(cuid())
+  url       String
+  product   Product @relation(fields: [productId], references: [id])
+  productId String
+}
+
+// models/Order.prisma
+model Order {
+  id       String         @id @default(cuid())
+  client   Client         @relation(fields: [clientId], references: [id])
+  clientId String
+  date     DateTime       @default(now())
+  total    Decimal
+  status   String         @default("pending")
+  products OrderProduct[]
+  Payment  Payment[]
+  Invoice  Invoice[]
+}
+
+// models/OrderProduct.prisma
+model OrderProduct {
+  id        String  @id @default(cuid())
+  order     Order   @relation(fields: [orderId], references: [id])
+  orderId   String
+  product   Product @relation(fields: [productId], references: [id])
+  productId String
+  quantity  Int
+}
+
+// models/PaymentMethod.prisma
+model PaymentMethod {
+  id          String    @id @default(cuid())
+  name        String
+  description String
+  client      Client    @relation(fields: [clientId], references: [id])
+  clientId    String
+  Payment     Payment[]
+}
+
+// models/Payment.prisma
+model Payment {
+  id              String        @id @default(cuid())
+  order           Order         @relation(fields: [orderId], references: [id])
+  orderId         String
+  paymentMethod   PaymentMethod @relation(fields: [paymentMethodId], references: [id])
+  paymentMethodId String
+  date            DateTime      @default(now())
+  amount          Decimal
+}
+
+// models/Invoice.prisma
+model Invoice {
+  id      String   @id @default(cuid())
+  order   Order    @relation(fields: [orderId], references: [id])
+  orderId String
+  date    DateTime @default(now())
+  total   Decimal
+  status  String   @default("pending")
 }

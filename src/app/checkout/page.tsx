@@ -1,12 +1,13 @@
 "use client";
 
+import Link from "next/link";
 import {
   Card,
-  CardContent,
-  CardDescription,
+  CardTitle,
   CardFooter,
   CardHeader,
-  CardTitle,
+  CardContent,
+  CardDescription,
 } from "@/components/ui/card";
 import { useState } from "react";
 import { Label } from "@/components/ui/label";
@@ -134,7 +135,9 @@ export default function CheckoutPage() {
               </form>
             </CardContent>
             <CardFooter>
-              <Button className="w-full">Complete Purchase</Button>
+              <Button className="w-full" asChild>
+                <Link href="/">Complete Purchase</Link>
+              </Button>
             </CardFooter>
           </Card>
         </div>

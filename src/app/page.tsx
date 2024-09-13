@@ -1,10 +1,10 @@
-import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import Image from "next/image";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { ModeToggle } from "@/components/mode-toggle";
 import { Card, CardContent } from "@/components/ui/card";
 import { Music, Search, Calendar, MapPin } from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
-import { ModeToggle } from "@/components/mode-toggle";
 
 export default function LandingPage() {
   return (
